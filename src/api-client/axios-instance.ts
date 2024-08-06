@@ -18,6 +18,8 @@ axiosInstance.interceptors.request.use(function (config) {
   return config;
 });
 
+console.log("object");
+
 axiosInstance.interceptors.response.use(
   (response) => {
     return response?.data;
