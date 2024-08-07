@@ -10,6 +10,9 @@ import router from "next/router";
 import Input from "@/components/Input";
 import MainButton from "@/components/button";
 import { validateEmail, validatePassword } from "@/utils/helpers";
+import eyeOff from "../../../public/images/eyeOff.jpg";
+import eyeOpen from "../../../public/images/eyeOpen.jpg";
+import NextImage from "next/image";
 
 const poppins = Poppins({
   weight: ["400", "700"],
@@ -28,6 +31,8 @@ const Registration = () => {
   const [isPasswordValid, setIsPasswordValid] = useState(false);
   const [passwordsMatch, setPasswordsMatch] = useState(false);
   const [passwordError, setPasswordError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [secondShowPassword, setSecondShowPassword] = useState(false);
 
   const handleRegister = async () => {
     const registerData: RegisterProps = {
@@ -79,6 +84,14 @@ const Registration = () => {
     return formState.name && isEmailValid && isPasswordValid && passwordsMatch;
   };
 
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const toggleSecondShowPassword = () => {
+    setSecondShowPassword(!secondShowPassword);
+  };
+
   return (
     <div className="bg-backgroundPrimary h-screen flex justify-center items-center">
       <div className="bg-[#FFFFFF] p-8 rounded-lg w-full mx-[472px]">
@@ -105,25 +118,43 @@ const Registration = () => {
             id="email"
             onValidationChange={setIsEmailValid}
           />
-          <Input
-            className="py-[6.5px] pl-[16px]"
-            type="password"
-            placeholder="Password"
-            onChange={(e) => handleChange("password", e.target.value)}
-            value={formState.password}
-            id="password"
-            onValidationChange={setIsPasswordValid}
-          />
-          <Input
-            className="py-[6.5px] pl-[16px]"
-            type="password"
-            placeholder="Confirm Password"
-            onChange={(e) => handleChange("confirmPassword", e.target.value)}
-            value={formState.confirmPassword}
-            id="confirmPassword"
-            passwordValue={formState.password}
-            onValidationChange={setPasswordsMatch}
-          />
+          <div className="relative">
+            <Input
+              className="py-[6.5px] pl-[16px]"
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              onChange={(e) => handleChange("password", e.target.value)}
+              value={formState.password}
+              id="password"
+              onValidationChange={setIsPasswordValid}
+            />
+            <NextImage
+              className="absolute top-3 right-5 cursor-pointer"
+              src={showPassword ? eyeOpen : eyeOff}
+              alt={"Eyeoff"}
+              onClick={toggleShowPassword}
+            />
+          </div>
+
+          <div className="relative">
+            <Input
+              className="py-[6.5px] pl-[16px]"
+              type={secondShowPassword ? "text" : "password"}
+              placeholder="Confirm Password"
+              onChange={(e) => handleChange("confirmPassword", e.target.value)}
+              value={formState.confirmPassword}
+              id="confirmPassword"
+              passwordValue={formState.password}
+              onValidationChange={setPasswordsMatch}
+            />
+            <NextImage
+              className="absolute top-3 right-5 cursor-pointer"
+              src={secondShowPassword ? eyeOpen : eyeOff}
+              alt={"Eyeoff"}
+              onClick={toggleSecondShowPassword}
+            />
+          </div>
+
           {!passwordsMatch && (
             <div className="text-red-600 font-sans text-[10px]">
               {passwordError}
