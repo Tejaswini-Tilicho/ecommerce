@@ -7,7 +7,7 @@ import { deleteApi, getApi } from "@/api-client/methods";
 import { getProductsData, ProductProps } from "@/utils/interface";
 import { useRouter } from "next/router";
 import { LIMIT } from "@/utils/constants";
-import MainButton from "@/components/button";
+import MainButton from "@/components/Button";
 import Loader from "@/components/Loader";
 import { useCartContext } from "@/context/context";
 import { toast } from "react-toastify";
@@ -236,7 +236,7 @@ const AdminDashboard = () => {
                     }
                     buttonName={"Edit"}
                     onClick={() =>
-                      router.push(`/EditProducts/${product?.product_id}`)
+                      router.push(`/edit-products/${product?.product_id}`)
                     }
                     width={"164px"}
                     height={"46px"}
@@ -283,7 +283,7 @@ const AdminDashboard = () => {
               <MainButton
                 className={`bg-[#0D0D0D] text-[#FFFFFF] text-[16px] font-semibold ml-[66px]`}
                 buttonName={"Back"}
-                onClick={() => router.push("/AdminHome")}
+                onClick={() => router.push("/admin-home")}
                 width={"149px"}
                 height={"50px"}
               />

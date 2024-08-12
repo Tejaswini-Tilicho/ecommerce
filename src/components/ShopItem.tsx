@@ -26,11 +26,11 @@ const ShopItem: React.FC<Shopping> = ({ items }) => {
 
   const handleImageClick = (product: getProductsData) => {
     // console.log(product);
-    router.push(`/Home/${product.product_id}`);
+    router.push(`/home/${product.product_id}`);
   };
 
   return (
-    <div className="grid grid-cols-3 gap-[20px] break-all">
+    <div className="w-full grid grid-cols-3 gap-[20px] break-all">
       {items.map((item, index) => (
         <div key={index} className="cursor-pointer">
           <Image

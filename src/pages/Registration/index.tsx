@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import router from "next/router";
 import Input from "@/components/Input";
-import MainButton from "@/components/button";
+import MainButton from "@/components/Button";
 import { validateEmail, validatePassword } from "@/utils/helpers";
 import eyeOff from "../../../public/images/eyeOff.jpg";
 import eyeOpen from "../../../public/images/eyeOpen.jpg";
@@ -53,7 +53,7 @@ const Registration = () => {
           toast.error(message);
         } else {
           toast.success(message);
-          router.push("/Login");
+          router.push("/login");
         }
       }
     } catch (error) {
@@ -189,7 +189,7 @@ const Registration = () => {
           <span className={`text-[#A9ABBD] ${poppins.className}`}>
             Already have an account?{" "}
           </span>
-          <Link href="/Login">
+          <Link href="/login">
             <div className={`font-bold text-[#A9ABBD] ${poppins.className}`}>
               <u>Login</u>
             </div>

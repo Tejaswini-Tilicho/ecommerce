@@ -2,7 +2,7 @@ import { useCartContext } from "@/context/context";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import CustomCheckbox from "./CheckBox";
-import MainButton from "./button";
+import MainButton from "./Button";
 
 interface FinalOrderProps {
   finalOrderData: any;

@@ -68,7 +68,7 @@ const CartScreen = () => {
           <div className="font-sans font-medium text-[16px] text-[#000000] pt-[11px]">
             Not ready to checkout?{" "}
             <u>
-              <Link href="/Home">Continue Shopping</Link>
+              <Link href="/home">Continue Shopping</Link>
             </u>
           </div>
 

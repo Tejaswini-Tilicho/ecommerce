@@ -1,5 +1,6 @@
 "use client";
 
+import ShopItem from "@/components/ShopItem";
 // import customButton from "./button/page";
 import "../../public/images/Bag.svg";
 
@@ -105,6 +106,8 @@ function Home() {
         placeholder="Options"
       /> */}
       {/* <Loader /> */}
+      {/* <App /> */}
+      <ShopItem items={[]} />
     </div>
   );
 }

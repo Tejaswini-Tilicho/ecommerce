@@ -11,18 +11,22 @@
   "dependencies": {
     "@stripe/react-stripe-js": "^2.7.3",
     "@stripe/stripe-js": "^4.1.0",
+    "antd": "^5.20.0",
     "axios": "^1.7.2",
     "next": "^14.2.4",
     "react": "^18",
     "react-dom": "^18",
+    "react-modal": "^3.16.1",
     "react-select": "^5.8.0",
     "react-toastify": "^10.0.5",
+    "react-use-cookie": "^1.6.1",
     "stripe": "^16.5.0"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/react-modal": "^3.16.3",
     "eslint": "^8",
     "eslint-config-next": "14.2.4",
     "postcss": "^8",

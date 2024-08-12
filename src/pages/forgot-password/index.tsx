@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Poppins } from "next/font/google";
 import { validateEmail } from "@/utils/helpers";
 import Input from "@/components/Input";
-import MainButton from "@/components/button";
+import MainButton from "@/components/Button";
 import { postApi } from "@/api-client/methods";
 import { toast } from "react-toastify";
 

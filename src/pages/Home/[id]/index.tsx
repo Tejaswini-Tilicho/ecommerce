@@ -10,7 +10,7 @@ import Loader from "@/components/Loader";
 import ImageGrid from "@/components/MultipleProductImages";
 import ColorPicker from "@/components/ColorPicker";
 import Counter from "@/components/Quantity";
-import MainButton from "@/components/button";
+import MainButton from "@/components/Button";
 import SizePicker from "@/components/SizePicker";
 
 const Product: React.FC = () => {
@@ -26,7 +26,7 @@ const Product: React.FC = () => {
   const [quantity, setQuantity] = useState<number>(1);
 
   useEffect(() => {
-    // console.log(productId);
+    console.log(productId, "query");
 
     if (productId) {
       fetchProductDetails(productId as string);
@@ -48,6 +48,9 @@ const Product: React.FC = () => {
   console.log(state, "state");
   const fetchProductDetails = async (id: string) => {
     // console.log("asxc");
+    // const endUrl = `products/${id}`;
+    // console.log(endUrl, "endUrl");
+
     try {
       const responseData: any = await getApi({
         endUrl: `products/${id}`,
@@ -65,8 +68,10 @@ const Product: React.FC = () => {
   const handleImageClick = () => {
     // console.log(selectedSize,'size')
     // console.log(quantity, selectedSize, "qury", product?.category?.category_id);
+    // const path = `/Home/${product?.product_id}/${product?.category?.category_id}`;
+    // console.log(path, "path");
     router.push({
-      pathname: `/Home/${product?.product_id}/${product?.category?.category_id}`,
+      pathname: `/home/${product?.product_id}/${product?.category?.category_id}`,
       query: {
         quantity: quantity,
         size: selectedSize,
@@ -128,7 +133,7 @@ const Product: React.FC = () => {
     <div className="pt-[135px] h-screen pr-[110px]">
       <div className="px-[7%]">
         <div className="flex gap-10">
-          <div className="w-[50%]">
+          <div className="w-[50%] cursor-pointer">
             <ImageGrid images={product?.images} onClick={handleImageClick} />
           </div>
           <div className="flex pl-[76px] flex-col w-[50%]">

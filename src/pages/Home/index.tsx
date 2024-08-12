@@ -9,7 +9,7 @@ import CustomCheckbox from "@/components/CheckBox";
 import ColorPicker from "@/components/ColorPicker";
 import Dropdown from "@/components/DropDown";
 import ShopItem from "@/components/ShopItem";
-import MainButton from "@/components/button";
+import MainButton from "@/components/Button";
 
 const HomePage = () => {
   const options = [
@@ -70,6 +70,11 @@ const HomePage = () => {
         handleOptions.categories
       )}&${handleQuery("color_id", handleOptions.colors)}`,
     });
+    // const endUrl = `list-products?page=${pageNumber}&limit=${LIMIT}&sort_by=${dropDownSelection}&${handleQuery(
+    //   "category_id",
+    //   handleOptions.categories
+    // )}&${handleQuery("color_id", handleOptions.colors)}`;
+    // console.log(endUrl, "endUrl");
     // console.log(getProductsData, "getProducts");
     setProductsInfo(getProductsData?.data);
     // console.log(productsInfo,'ind');
@@ -155,9 +160,19 @@ const HomePage = () => {
   };
 
   return (
-    <div className="h-full pt-[31px] pr-[110px]">
+    <div className="h-full pt-[35px] pr-[110px]">
+      <div className="w-screen h-[216px] pl-[145px] bg-[#0D0D0D]">
+        <div className="font-sans text-[36px] text-[#FFFFFF] pt-[34px] font-semibold">
+          Shop Men’s
+        </div>
+        <div className="font-sans w-[476px] text-[18px] font-normal text-[#FFFFFF]">
+          Revamp your style with the latest designer trends in men’s clothing or
+          achieve a perfectly curated wardrobe thanks to our line-up of timeless
+          pieces.{" "}
+        </div>
+      </div>
       <div className="flex">
-        <div className="sticky top-5">
+        <div className="w-[25%] sticky top-5">
           <div className="sticky top-10">
             <div className="pr-[90px] pl-[145px] pt-[43px]">
               <div className="flex items-center">
@@ -215,7 +230,7 @@ const HomePage = () => {
           </div>
         </div>
 
-        <div className="pr-[141px] w-full">
+        <div className="pl-[90px] pt-[30px] pr-[141px] w-[75%]">
           <div className="flex sticky top-0 justify-end z-10">
             <Dropdown options={options} onChange={handleInput} />
           </div>

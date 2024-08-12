@@ -4,11 +4,13 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import { Public_Sans } from "next/font/google";
-import { createContext } from "react";
+import { createContext, useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CartContextProvider from "@/context/context";
 import AuthProvider from "@/components/Authenticator";
+import Modal from "react-modal";
+import { ConfigProvider } from "antd";
 
 const publicSans = Public_Sans({
   weight: ["400", "700"],
@@ -23,23 +25,31 @@ export default function App({ Component, pageProps }: AppProps) {
   const path = router.pathname;
 
   const paths = [
-    "/Login",
-    "/ForgotPassword",
+    "/login",
+    "/forgot-password",
     "/reset-password",
-    "/Registration",
+    "/registration",
   ];
+
+  useEffect(() => {
+    Modal.setAppElement("#__next");
+  }, []);
 
   return (
     <div className={`${publicSans.className} h-full bg-[#EFF2F6]`}>
       <AuthProvider>
         <CartContextProvider>
-          {!paths.includes(path) && <CustomNav />}
-          {showHeader && <Header />}
-          <ToastContainer />
+          <ConfigProvider>
+            {!paths.includes(path) && <CustomNav />}
+            {showHeader && <Header />}
+            <ToastContainer />
 
-          <div className="">
-            <Component {...pageProps} />
-          </div>
+            <div className="">
+              <Component {...pageProps} />
+            </div>
+          </ConfigProvider>
+
+          {/* <SampleModal /> */}
         </CartContextProvider>
       </AuthProvider>
     </div>

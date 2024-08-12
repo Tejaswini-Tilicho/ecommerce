@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import order from "../../public/images/orderPlaced.jpg";
-import MainButton from "@/components/button";
+import MainButton from "@/components/Button";
 import NextImage from "next/image";
 import { useRouter } from "next/router";
 
@@ -14,7 +14,7 @@ const OrderPlaced = () => {
           "bg-[#000000] text-[#FFFFFF] p-[10px] mt-[50px] flex items-center justify-center"
         }
         buttonName={"Back to Home"}
-        onClick={() => router.push("/Home")}
+        onClick={() => router.push("/home")}
       />
     </div>
   );

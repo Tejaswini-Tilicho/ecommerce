@@ -23,7 +23,7 @@ const CustomNav: React.FC<NavProps> = ({
 }) => {
   const router = useRouter();
   const path = router.pathname;
-  const pathCheck = path.includes("/Home");
+  const pathCheck = path.includes("/home");
   const [userData, setUserData] = useState<InfoProps | null>({
     role: "",
     email: "",
@@ -45,10 +45,10 @@ const CustomNav: React.FC<NavProps> = ({
   }, []);
 
   const hideRoutes = [
-    "/AdminHome",
-    "/AdminDashboard",
-    "/AddProducts",
-    "/EditProducts",
+    "/admin-home",
+    "/admin-dashboard",
+    "/add-products",
+    "/edit-products",
   ];
   const checkRoute = hideRoutes.find((e) => path.startsWith(e));
   // console.log(checkRoute, "check");
@@ -68,11 +68,11 @@ const CustomNav: React.FC<NavProps> = ({
               <li className="text-[#FFFFFF] font-inter font-normal pr-[32px]">
                 <Link
                   className={`${
-                    path === "/Ecommerce"
+                    path === "/ecommerce"
                       ? "font-bold text-[20px]"
                       : "font-normal text-[17px]"
                   }`}
-                  href={"/Ecommerce"}
+                  href={"/ecommerce"}
                 >
                   Ecommerce
                 </Link>
@@ -85,7 +85,7 @@ const CustomNav: React.FC<NavProps> = ({
                       ? "font-bold text-[20px]"
                       : "font-normal text-[17px]"
                   }`}
-                  href={"/Home"}
+                  href={"/home"}
                 >
                   Shop
                 </Link>
@@ -93,11 +93,11 @@ const CustomNav: React.FC<NavProps> = ({
               <li className="text-[#FFFFFF] font-inter font-normal text-[17px] pr-[32px]">
                 <Link
                   className={`${
-                    path === "/Stories"
+                    path === "stories"
                       ? "font-bold text-[20px]"
                       : "font-normal text-[17px]"
                   }`}
-                  href={"/Stories"}
+                  href={"/stories"}
                 >
                   Stories
                 </Link>
@@ -105,11 +105,11 @@ const CustomNav: React.FC<NavProps> = ({
               <li className="text-[#FFFFFF] font-inter font-normal text-[17px] pr-[32px]">
                 <Link
                   className={`${
-                    path === "/About"
+                    path === "/about"
                       ? "font-bold text-[20px]"
                       : "font-normal text-[17px]"
                   }`}
-                  href={"/About"}
+                  href={"/about"}
                 >
                   About
                 </Link>
@@ -129,7 +129,7 @@ const CustomNav: React.FC<NavProps> = ({
                 {
                   label: "Sign out",
                   value: "sign out",
-                  route: "/Login",
+                  route: "/login",
                   action: () => {
                     localStorage.removeItem("userData");
                     localStorage.removeItem("accessToken");
@@ -149,7 +149,7 @@ const CustomNav: React.FC<NavProps> = ({
                 <Image
                   className="flex items-center justify-center cursor-pointer"
                   src={bag}
-                  onClick={() => router.push("/CartScreen")}
+                  onClick={() => router.push("/cart-screen")}
                   alt={"Bag"}
                 />
                 <span className="absolute top-[-3px] right-[-20px] text-[#FFFFFF] px-2 py-1 font-bold">

@@ -1,7 +1,7 @@
 import jacket from "../../../public/images/blackJacket.jpg";
 import NextImage from "next/image";
 import Input from "@/components/Input";
-import MainButton from "@/components/button";
+import MainButton from "@/components/Button";
 
 const OrdersSummary = () => {
   const buttons = [

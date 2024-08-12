@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useCartContext } from "@/context/context";
 import { calculateTotalAmount } from "@/utils/helpers";
-import MainButton from "./button";
+import MainButton from "./Button";
 import Input from "./Input";
 
 const OrderSummary = () => {
@@ -11,7 +11,7 @@ const OrderSummary = () => {
 
   const handleProduct = () => {
     // toast.success("Proceed to buy");
-    router.push("/Checkout");
+    router.push("/checkout");
   };
 
   return (

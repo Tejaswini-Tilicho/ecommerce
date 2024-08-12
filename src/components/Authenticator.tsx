@@ -13,16 +13,16 @@ export default function AuthProvider({ children }: AuthProps) {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   const authenticationRoutes = [
-    "/Login",
-    "/ForgotPassword",
+    "/login",
+    "/forgot-password",
     "/reset-password",
-    "/Registration",
+    "/registration",
   ];
   const adminRoutes = [
-    "/AdminHome",
-    "/AdminDashboard",
-    "/AddProducts",
-    "/EditProducts",
+    "/admin-home",
+    "/admin-dashboard",
+    "/add-products",
+    "/edit-products",
   ];
   // const [isPending, startTransition]= useTransition();
   useEffect(() => {
@@ -33,7 +33,7 @@ export default function AuthProvider({ children }: AuthProps) {
     console.log(asPath);
 
     const accessToken = localStorage.getItem("accessToken");
-    const role = JSON.parse(localStorage.getItem("role") || "");
+    const role = localStorage.getItem("role") || "";
     const check = authenticationRoutes.find((e) => routerPath.startsWith(e));
     // console.log(check, "check");
 
@@ -54,13 +54,13 @@ export default function AuthProvider({ children }: AuthProps) {
         !routerPath.includes(check as string)
         // && !routerPath.startsWith("/reset-password/")
       ) {
-        router.push("/Login");
+        router.push("/login");
       } else if (
         accessToken &&
         authenticationRoutes.includes(routerPath) &&
         role !== "admin"
       ) {
-        router.push("/Home");
+        router.push("/home");
       }
 
       if (accessToken) {
@@ -71,10 +71,10 @@ export default function AuthProvider({ children }: AuthProps) {
             !adminRoutes.includes(routerPath) &&
             !adminRoutes.includes(checkRoute as string)
           ) {
-            router.push("/AdminHome");
+            router.push("/admin-home");
           }
         } else if (adminRoutes?.includes(routerPath)) {
-          router.push("/Home");
+          router.push("/home");
         }
       }
     }

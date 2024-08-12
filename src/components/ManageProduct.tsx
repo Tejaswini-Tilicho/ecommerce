@@ -5,7 +5,7 @@ import { getApi, postApi } from "@/api-client/methods";
 import CustomDropdown from "@/components/CustomDropDown";
 import { AddProductProps } from "@/utils/interface";
 import SingleDropdown from "@/components/SingleDropdown";
-import MainButton from "@/components/button";
+import MainButton from "@/components/Button";
 import Input from "@/components/Input";
 
 interface ManageProductProps {

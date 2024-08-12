@@ -37,7 +37,7 @@
 // export default DragDrop;
 
 import { useRef, useState } from "react";
-import MainButton from "@/components/button";
+import MainButton from "@/components/Button";
 
 const DragDrop = () => {
   const [files, setFiles] = useState<File[]>([]);

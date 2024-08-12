@@ -1,4 +1,4 @@
-import MainButton from "@/components/button";
+import MainButton from "@/components/Button";
 import Input from "@/components/Input";
 import { useState } from "react";
 import { Poppins } from "next/font/google";
@@ -77,7 +77,7 @@ const ResetPassword = () => {
       // console.log(postData, "post");
       toast.success(postData?.message);
       if (postData?.status) {
-        router.push("/Login");
+        router.push("/login");
       }
     } catch (err) {
       console.log(err);

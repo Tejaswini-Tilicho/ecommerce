@@ -4,7 +4,7 @@ import { PostAddressProps } from "@/utils/interface";
 import { postApi } from "@/api-client/methods";
 import { useCartContext } from "@/context/context";
 import { getAddresses } from "@/utils/common/common.api";
-import MainButton from "./button";
+import MainButton from "./Button";
 import Input from "./Input";
 import CustomCheckbox from "./CheckBox";
 

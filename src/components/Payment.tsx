@@ -2,7 +2,7 @@ import Switch from "./Switch";
 import CustomDropdown from "./CustomDropDown";
 import pay from "../../public/images/paypal.png";
 import apple from "../../public/images/applepay.png";
-import MainButton from "./button";
+import MainButton from "./Button";
 import Input from "./Input";
 
 const Payment = () => {

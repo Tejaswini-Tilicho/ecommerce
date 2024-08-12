@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-interface Option{
+interface Option {
   label: string;
   value: string;
 }
@@ -11,7 +11,7 @@ interface DropdownProps {
 }
 
 const Dropdown: React.FC<DropdownProps> = ({ options, onChange }) => {
-  console.log(options)
+  console.log(options);
   const [selectedOption, setSelectedOption] = useState("");
 
   const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -21,11 +21,11 @@ const Dropdown: React.FC<DropdownProps> = ({ options, onChange }) => {
       onChange(value);
     }
   };
-// console.log(selectedOption,"asdfgh")
+  // console.log(selectedOption,"asdfgh")
   return (
     <div>
-      <div className="border border-black">
-        <div className="flex justify-center pt-[6px] text-[#000000] font-bold text-[14px] text-sans">
+      <div className="border-[2px] border-black">
+        <div className="flex justify-center text-[#000000] font-bold text-[14px] text-sans">
           <select
             className="pl-[5px] bg-[#EFF2F6] w-full h-[37px] outline-none"
             value={selectedOption}
@@ -37,11 +37,7 @@ const Dropdown: React.FC<DropdownProps> = ({ options, onChange }) => {
               </option>
             ))}
             {options.map((option, index) => (
-              <option
-
-                key={index}
-                value={option.value}
-              >
+              <option key={index} value={option.value}>
                 {option.label}
               </option>
             ))}
@@ -53,7 +49,6 @@ const Dropdown: React.FC<DropdownProps> = ({ options, onChange }) => {
 };
 
 export default Dropdown;
-
 
 // import React, { useState } from "react";
 
@@ -103,8 +98,6 @@ export default Dropdown;
 // };
 
 // export default Dropdown;
-
-
 
 // import React, { useState } from "react";
 

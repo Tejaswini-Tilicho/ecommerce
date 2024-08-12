@@ -6,8 +6,15 @@ import { getApi } from "@/api-client/methods";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { APIprops } from "@/utils/interface";
-import MainButton from "@/components/button";
+import MainButton from "@/components/Button";
 import Footer from "@/components/Footer";
+import { Button } from "antd";
+import { Public_Sans } from "next/font/google";
+
+const publicSans = Public_Sans({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+});
 
 const Ecommerce = () => {
   const [homeData, setHomeData] = useState<any>([]);
@@ -46,8 +53,8 @@ const Ecommerce = () => {
           }
         </div>
       </div>
-      <div>
-        <MainButton
+      <div className="flex items-center justify-center">
+        {/* <MainButton
           className={
             "border border-black m-auto text-[#0D0D0D] font-sans font-semibold text-[16px]"
           }
@@ -55,7 +62,13 @@ const Ecommerce = () => {
           onClick={() => router.push("/Home")}
           width={"194px"}
           height={"50px"}
-        />
+        /> */}
+        <Button
+          className={`border border-black bg-[#EFF2F6] w-[194px] h-[50px] m-auto text-[#0D0D0D] ${publicSans.className} font-semibold text-[16px]`}
+          onClick={() => router.push("/home")}
+        >
+          Shop All
+        </Button>
       </div>
 
       <div className="w-[1114px] border border-black m-auto mt-[30px] mb-[31px]">
@@ -83,32 +96,36 @@ const Ecommerce = () => {
       </div>
 
       <div>
-        <Link href={`Home`}>
+        <Link href={`home`}>
           <MainButton
             className={
               "border border-black m-auto text-[#0D0D0D] font-sans font-semibold text-[16px]"
             }
             buttonName={"Shop All"}
-            onClick={() => router.push("/Home")}
+            onClick={() => router.push("/home")}
             width={"194px"}
             height={"50px"}
           />
         </Link>
       </div>
-      <div className="grid grid-cols-3 gap-6 pl-[125px]">
+      <div className="grid grid-cols-3 gap-6 pl-[125px] cursor-pointer">
         {homeData?.map(
           (item: { images: string; product_id: any }, index: number) => {
             const style =
               styling.find((s) => s.index === index % styling.length) ||
               styling[0];
             return (
-              <div key={index} className={style.className}>
+              // <div key={index} className={style.className}>
+              <div
+                key={index}
+                className={`${style.className} transform transition-transform duration-300 hover:scale-110 hover:-translate-y-2`}
+              >
                 <NextImage
                   src={item.images[0]}
                   alt={"Images loading.."}
                   width={368}
                   height={521}
-                  onClick={() => router.push(`Home/${item?.product_id}`)}
+                  onClick={() => router.push(`home/${item?.product_id}`)}
                 />
               </div>
             );

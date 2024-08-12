@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { getApi, postApi } from "@/api-client/methods";
 import SingleDropdown from "@/components/SingleDropdown";
 import { toast } from "react-toastify";
-import MainButton from "@/components/button";
+import MainButton from "@/components/Button";
 import Loader from "@/components/Loader";
 import Carousel from "@/components/Carousel";
 import Counter from "@/components/Quantity";
@@ -117,7 +117,7 @@ const ProductInfo: React.FC = () => {
 
   const handleBuyNow = () => {
     router.push({
-      pathname: "/Checkout",
+      pathname: "/checkout",
       query: {
         product_name: data?.product_name,
         size: sizeLabel,

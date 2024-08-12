@@ -1,20 +1,20 @@
 /* eslint-disable @next/next/no-img-element */
 
 import React, { useEffect, useRef, useState } from "react";
-import { getApi, postApi } from "@/api-client/methods";
+import { getApi, postApi, putApi } from "@/api-client/methods";
 import CustomDropdown from "@/components/CustomDropDown";
 import { AddProductProps } from "@/utils/interface";
 import SingleDropdown from "@/components/SingleDropdown";
-import MainButton from "@/components/button";
+import MainButton from "@/components/Button";
 import Input from "@/components/Input";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 
-const AddProducts: React.FC = () => {
+const EditProducts: React.FC = () => {
   const router = useRouter();
-  // console.log(router.pathname, "path");
-  const role = localStorage.getItem("role");
-  console.log(role, "role");
+  //   console.log(router.query, "query");
+  const { id } = router.query;
+  //   console.log(id, "query");
   const [base64Files, setBase64Files] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const [productDetails, setProductDetails] = useState<{
@@ -22,6 +22,11 @@ const AddProducts: React.FC = () => {
     colors: { color_id: string; color_name: string }[];
     sizes: { size_id: string; size_type: string }[];
   }>({ categories: [], colors: [], sizes: [] });
+  const accessToken = localStorage.getItem("accessToken");
+  const [productData, setProductData] = useState<any>({});
+
+  //   console.log(productData, "proData");
+  const images = productData?.images;
 
   const [inputEnter, setInputEnter] = useState<AddProductProps>({
     product_name: "",
@@ -29,11 +34,65 @@ const AddProducts: React.FC = () => {
     color_ids: [],
     description: "",
     images: [],
-    price: undefined,
-    quantity: undefined,
+    price: 0,
+    quantity: 0,
     size_ids: [],
   });
+
+  useEffect(() => {
+    const getProduct = async (id: string) => {
+      const response: any = await getApi({
+        endUrl: `products/${id}`,
+        headers: `Bearer ${accessToken}`,
+      });
+      console.log(response, "res");
+      //   setProductData(response?.data);
+      //   getProduct(id as string);
+      setProductData(response?.data);
+      setInputEnter({
+        product_name: response?.data.product_name,
+        category_id: response?.data.category_id,
+        color_ids: response?.data.color_ids,
+        description: response?.data.description,
+        images: response?.data.images,
+        price: response?.data.price,
+        quantity: response?.data.quantity,
+        size_ids: response?.data.size_ids,
+      });
+    };
+    if (id) getProduct(id as string);
+  }, [id, accessToken]);
+
+  //   const inputData = productData;
+
+  //   console.log(inputEnter, "Enter");
+
   const [buttonDisable, setButtonDisable] = useState<boolean>(false);
+
+  //   const UpdateData = async (id: any) => {
+  //     const responseData = await putApi({
+  //       endUrl: `admin/edit-product/${id}`,
+  //       headers: `Bearer${accessToken}`,
+  //       data: inputData,
+  //     });
+  //   };
+
+  const UpdateData = async (id: any) => {
+    try {
+      const responseData: any = await putApi({
+        endUrl: `admin/edit-product/${id}`,
+        headers: `Bearer ${accessToken}`,
+        data: inputEnter,
+      });
+      if (responseData?.status) {
+        toast.success(responseData?.message);
+        router.push("/admin-home");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update product");
+    }
+  };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = e.target.files;
@@ -52,6 +111,7 @@ const AddProducts: React.FC = () => {
       }));
     }
   };
+  //   console.log(inputEnter, "ipenter");
 
   const convertFileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -67,23 +127,11 @@ const AddProducts: React.FC = () => {
   const convertFilesArrayToBase64 = async (
     files: File[]
   ): Promise<string[]> => {
-    const validFileTypes = ["image/png", "image/jpeg", "image/jpg"];
     const base64Files: string[] = [];
-
     for (const file of files) {
-      if (validFileTypes.includes(file.type)) {
-        try {
-          const base64File = await convertFileToBase64(file);
-          base64Files.push(base64File);
-        } catch (err) {
-          console.error(`Error converting file ${file.name}:`, err);
-          toast.error(`Error converting file ${file.name}`);
-        }
-      } else {
-        toast.error(`File type not supported: ${file.name}`);
-      }
+      const base64File = await convertFileToBase64(file);
+      base64Files.push(base64File);
     }
-
     return base64Files;
   };
 
@@ -97,17 +145,6 @@ const AddProducts: React.FC = () => {
       // console.log(data, "data");
       if (data?.status) {
         toast.success(data?.message);
-        setInputEnter({
-          product_name: "",
-          category_id: "",
-          color_ids: [],
-          description: "",
-          images: [],
-          price: undefined,
-          quantity: undefined,
-          size_ids: [],
-        });
-        setBase64Files([]);
         setButtonDisable(true);
       }
     } catch (error) {
@@ -137,7 +174,9 @@ const AddProducts: React.FC = () => {
   }, []);
 
   const handleChangeValue = (e: any) => {
+    // console.log(e.target.value, "trfy");
     const { name, value } = e.target;
+    // console.log(name, "nameTYUI");
     setInputEnter((prevState) => ({
       ...prevState,
       [name]: value,
@@ -145,7 +184,6 @@ const AddProducts: React.FC = () => {
   };
 
   const handleDropdownChange = (name: string, value: string | string[]) => {
-    // console.log(name);
     setInputEnter((prevState) => ({
       ...prevState,
       [name]: value,
@@ -178,25 +216,16 @@ const AddProducts: React.FC = () => {
       images: updatedBase64Files,
     }));
   };
+  console.log(inputEnter?.product_name, "enter");
 
   return (
     <div className="bg-[#EFF2F6] h-screen pl-[145px]">
       <div className="text-[36px] font-semibold font-sans pt-[94px] text-[#000000]">
-        Add Products
+        Edit Product
       </div>
       <div className="flex">
         <div className="grid grid-cols-4 w-[337px] overflow-y-auto h-[341px] mt-[90px]">
-          {base64Files.map((image, index) => (
-            // <div
-            //   key={index}
-            //   className="relative mt-[77px] w-full h-full border"
-            // >
-            //   <img
-            //     className="absolute inset-0 object-cover w-full h-full"
-            //     src={image}
-            //     alt={`Image ${index}`}
-            //   />
-            // </div>
+          {images?.map((image: any, index: any) => (
             <div
               key={index}
               className="relative mt-[77px] w-full h-full border"
@@ -237,43 +266,41 @@ const AddProducts: React.FC = () => {
         <div className="flex-col gap-[24px] flex ml-[42px] mt-[94px] w-[60%] mr-[262px]">
           <div className="flex gap-[54px]">
             <Input
-              className="h-[40px] pl-[16px] text-[#000000] py-[11.5px] bg-[#EFF2F6]"
+              className="h-[40px] pl-[16px] py-[11.5px] bg-[#EFF2F6]"
               type={"text"}
-              placeholder={"Name"}
+              //   placeholder={productData?.product_name}
               name="product_name"
-              value={inputEnter.product_name}
+              value={inputEnter?.product_name}
               min={5}
               max={25}
               onChange={handleChangeValue}
-              required={true}
             />
             <Input
-              className="h-[40px] pl-[16px] text-[#000000] py-[11.5px] bg-[#EFF2F6]"
+              className="h-[40px] pl-[16px] py-[11.5px] bg-[#EFF2F6]"
               type={"number"}
-              placeholder={"Quantity"}
+              //   placeholder={productData?.quantity}
               name="quantity"
               value={inputEnter.quantity}
               onChange={handleChangeValue}
               min={1}
               max={4}
-              required={true}
             />
           </div>
 
           <div className="flex gap-[54px]">
             <CustomDropdown
-              className="h-[40px] w-full text-[#000000] bg-[#EFF2F6]"
-              placeholder={"Available sizes"}
+              className="h-[40px] pl-[13px] w-full bg-[#EFF2F6]"
+              placeholder={"Edit sizes"}
               options={getSizeOptions()}
               multiple={true}
-              value={inputEnter.size_ids}
+              value={productData?.size_ids}
               name="size_ids"
               onChange={(value) => handleDropdownChange("size_ids", value)}
             />
             <Input
-              className="h-[40px] pl-[16px] text-[#000000] py-[11.5px] bg-[#EFF2F6]"
+              className="h-[40px] pl-[16px] py-[11.5px] bg-[#EFF2F6]"
               type={"number"}
-              placeholder={"Price"}
+              placeholder={productData?.price}
               name="price"
               value={inputEnter.price}
               onChange={handleChangeValue}
@@ -284,31 +311,29 @@ const AddProducts: React.FC = () => {
 
           <div className="flex gap-[54px]">
             <CustomDropdown
-              className="h-[40px] w-full bg-[#EFF2F6]"
-              placeholder={"Colors"}
+              className="h-[40px] pl-[13px] w-full bg-[#EFF2F6]"
+              placeholder={"Edit Colors"}
               options={getColorOptions()}
               multiple={true}
-              value={inputEnter.color_ids}
+              value={productData.color_ids}
               name="color_ids"
               onChange={(value) => handleDropdownChange("color_ids", value)}
             />
             <SingleDropdown
               className="h-[40px] pl-[13px] w-full text-[#A9ABBD] bg-[#EFF2F6]"
-              placeholder={"Categories"}
+              placeholder={"Edit Categories"}
               options={getCategoryOptions()}
-              value={inputEnter.category_id}
+              value={productData?.category_id}
               // name="category_id"
-              onChange={(value) =>
-                handleDropdownChange("category_id", value?.value || null)
-              }
+              onChange={(value) => handleDropdownChange("category_id", value)}
             />
           </div>
           <Input
-            className="h-[120px] pl-[16px] text-[#000000] py-[11.5px] bg-[#EFF2F6]"
+            className="h-[120px] pl-[16px] py-[11.5px] bg-[#EFF2F6]"
             type={"text"}
-            placeholder={"Description"}
+            placeholder={productData?.description}
             name="description"
-            value={inputEnter.description}
+            value={productData?.description}
             onChange={handleChangeValue}
             min={10}
             max={500}
@@ -320,8 +345,8 @@ const AddProducts: React.FC = () => {
           className={`bg-[#0D0D0D] text-[#FFFFFF] text-[16px] font-semibold ml-[386px] ${
             buttonDisable ? "opacity-50 cursor-not-allowed" : ""
           }`}
-          buttonName={"Add"}
-          onClick={handleAddClick}
+          buttonName={"Edit"}
+          onClick={() => UpdateData(id)}
           width={"149px"}
           height={"50px"}
           disabled={buttonDisable}
@@ -329,7 +354,7 @@ const AddProducts: React.FC = () => {
         <MainButton
           className={`bg-[#0D0D0D] text-[#FFFFFF] text-[16px] font-semibold ml-[66px]`}
           buttonName={"Back"}
-          onClick={() => router.push("/AdminHome")}
+          onClick={() => router.push("/admin-home")}
           width={"149px"}
           height={"50px"}
         />
@@ -338,4 +363,4 @@ const AddProducts: React.FC = () => {
   );
 };
 
-export default AddProducts;
+export default EditProducts;

@@ -136,7 +136,7 @@ const Checkout = () => {
     console.log(singleProductCalculation, "arrayOf");
     // console.log(colour, 'colour');
 
-    //   console.log(transformedDataSingle, "update");
+    console.log(transformedDataSingle, "update");
 
     interface UpdatedProduct {
       images: string[];
@@ -180,12 +180,19 @@ const Checkout = () => {
     };
 
     const orderData = getObject({ state });
+
+    // if (orderData.amount < 50) {
+    //   toast.error("The total amount must be at least $50 to proceed.");
+    //   router.push(`/productDetails/${product_id}`);
+    //   return;
+    // }
+
     //   console.log(orderData, "order");
     const { id, user_id, ...rest } = orderData?.address;
     //   console.log(rest, "rest");
     const finalOrderData = { ...orderData, address: rest };
     // setFinalOrder(finalOrderData);
-    console.log(finalOrderData, "order");
+    // console.log(finalOrderData, "order");
     const response: any = await postOrder(finalOrderData);
     // console.log(response, "res");
     // console.log(response?.data?.client_secret, "client");

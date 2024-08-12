@@ -1,4 +1,4 @@
-import MainButton from "@/components/button";
+import MainButton from "@/components/Button";
 import Input from "@/components/Input";
 
 const Orders = () => {
