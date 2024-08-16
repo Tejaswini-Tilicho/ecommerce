@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import SingleDropdown from "./SingleDropdown";
 import { PostAddressProps } from "@/utils/interface";
-import { postApi } from "@/api-client/methods";
 import { useCartContext } from "@/context/context";
-import { getAddresses } from "@/utils/common/common.api";
 import MainButton from "./Button";
 import Input from "./Input";
 import CustomCheckbox from "./CheckBox";
+import { getAddresses } from "@/utils/common/common.api";
+import { OrderObject } from "@/api-classes/apis";
 
 interface AddressProps {
   nextStep: () => void;
@@ -15,7 +15,6 @@ interface AddressProps {
 const Address: React.FC<AddressProps> = ({ nextStep }) => {
   const { state, dispatch } = useCartContext();
   const selectAddressData = state?.checkout?.address?.currentAddress;
-  //   console.log(selectAddressData);
 
   useEffect(() => {
     getAddresses({ dispatch });
@@ -96,10 +95,7 @@ const Address: React.FC<AddressProps> = ({ nextStep }) => {
   };
 
   const postAddress = async (data: PostAddressProps) => {
-    const address = await postApi({
-      endUrl: `user/add-address`,
-      data: data,
-    });
+    const address = await OrderObject.postAddressData.postAddress(data);
     return address;
   };
 

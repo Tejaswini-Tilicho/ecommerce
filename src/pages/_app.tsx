@@ -8,9 +8,9 @@ import { createContext, useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CartContextProvider from "@/context/context";
-import AuthProvider from "@/components/Authenticator";
 import Modal from "react-modal";
 import { ConfigProvider } from "antd";
+import AuthProvider from "@/components/Authenticator";
 
 const publicSans = Public_Sans({
   weight: ["400", "700"],

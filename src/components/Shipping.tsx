@@ -8,7 +8,7 @@ interface FinalOrderProps {
   finalOrderData: any;
 }
 const Shipping: React.FC<FinalOrderProps> = ({ finalOrderData }) => {
-  console.log(finalOrderData, "final");
+  // console.log(finalOrderData, "final");
   const router = useRouter();
   const { state, dispatch } = useCartContext();
   const [isShipping, setIsShipping] = useState(
@@ -21,8 +21,6 @@ const Shipping: React.FC<FinalOrderProps> = ({ finalOrderData }) => {
     setIsShipping(shippingType);
     dispatch({ type: "SHIPPING_TYPE", payload: shippingType });
   };
-
-  //   console.log(getObject({ state }), "get");
 
   return (
     <div>

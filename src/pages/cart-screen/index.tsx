@@ -1,60 +1,26 @@
-import { useEffect } from "react";
 import OrderSummary from "../../components/OrderSummary";
 import OrderInfo from "@/components/OrderInfo";
-import { deleteApi, getApi } from "@/api-client/methods";
 import { getCartProducts, postCartData } from "@/utils/common/common.api";
 import { useCartContext } from "@/context/context";
 import Cart from "@/components/Cart";
 import Link from "next/link";
+import { CartObject } from "@/api-classes/apis";
+import { useEffect } from "react";
 
 const CartScreen = () => {
-  // const [cartData, setCartData] = useState<any>({ products: [] });
   const { state, dispatch } = useCartContext();
-  console.log(state, "cart");
 
   useEffect(() => {
-    handleCartData();
-  }, []);
+    CartObject.cartData.handleCartData(dispatch);
+  }, [dispatch]);
 
-  const handleCartData = async () => {
-    const getCartData: any = await getApi({
-      endUrl: `user/cart`,
-    });
-    dispatch({ type: "ADD_PRODUCT", payload: getCartData?.data?.products });
-    console.log(getCartData, "data");
-    // setCartData(getCartData?.data || { products: [] });
-    // console.log(cartData, "cart");
-  };
-
-  const handleDelete = async (
-    product_id: string,
-    size_id: string,
-    color_id: string
+  const deleteCartItems = (
+    id: any,
+    size_id: any,
+    color_id: any,
+    dispatch: any
   ) => {
-    try {
-      await deleteApi({
-        endUrl: `user/remove-from-cart`,
-        data: {
-          product_id,
-          size_id,
-          color_id,
-        },
-      });
-
-      await getCartProducts({ dispatch: dispatch });
-
-      // setCartData((prevData: any) => ({
-      //   ...prevData,
-      //   products: prevData.products.filter(
-      //     (item: any) =>
-      //       item.product_id !== product_id ||
-      //       item.size.size_id !== size_id ||
-      //       item.color.color_id !== color_id
-      //   ),
-      // }));
-    } catch (error) {
-      console.error("Error deleting item from cart:", error);
-    }
+    CartObject.deleteCartItem.handleDelete(id, size_id, color_id, dispatch);
   };
 
   return (
@@ -87,10 +53,11 @@ const CartScreen = () => {
                       quantity={item?.quantity}
                       cost={item?.price ? `$${item?.price}` : "$0"}
                       onRemove={() =>
-                        handleDelete(
+                        deleteCartItems(
                           item?.product_id,
                           item?.size.size_id,
-                          item?.color.color_id
+                          item?.color.color_id,
+                          dispatch
                         )
                       }
                       onIncrement={async () => {

@@ -29,7 +29,7 @@ export default function App() {
   const appearance = {
     theme: "stripe",
   };
-  const options = {
+  const options: any = {
     clientSecret,
     appearance,
   };

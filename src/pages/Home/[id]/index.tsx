@@ -4,38 +4,39 @@ import fav from "../../../../public/images/fav.svg";
 import group from "../../../../public/images/Group.svg";
 import { useRouter } from "next/router";
 import { useCartContext } from "@/context/context";
-import { getApi, postApi } from "@/api-client/methods";
-import { toast } from "react-toastify";
 import Loader from "@/components/Loader";
 import ImageGrid from "@/components/MultipleProductImages";
 import ColorPicker from "@/components/ColorPicker";
 import Counter from "@/components/Quantity";
 import MainButton from "@/components/Button";
 import SizePicker from "@/components/SizePicker";
+import useSWR from "swr";
+import { CartObject, ProductObject } from "@/api-classes/apis";
 
 const Product: React.FC = () => {
   const { state, dispatch } = useCartContext();
   const router = useRouter();
+  const queryData = router.query;
   const { id: productId } = router.query;
-  const [product, setProduct] = useState<any>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | any>(null);
   const [sizeType, setSizeType] = useState<any>(null);
-  // const [AddCartData, setAddCartData] = useState<any>(null);
   const [addToCart, setAddToCart] = useState<boolean>(false);
   const [quantity, setQuantity] = useState<number>(1);
 
-  useEffect(() => {
-    console.log(productId, "query");
+  const fetcher = async (id: string) => {
+    return ProductObject.productsByIds.fetchProductDetails(id);
+  };
 
-    if (productId) {
-      fetchProductDetails(productId as string);
-    }
-  }, [productId]);
+  const { data: product, isLoading: productLoading } = useSWR(
+    productId ? `products/${productId}` : null,
+    () => fetcher(productId as string)
+  );
+  // console.log(product, "Product");
 
   useEffect(() => {
     if (product) {
-      if (!selectedColor && product?.colors?.length > 1) {
+      if (!selectedColor && product?.colors?.length >= 1) {
         setSelectedColor(product.colors[0].color_id);
       }
       if (!selectedSize && product?.sizes?.length > 1) {
@@ -43,33 +44,9 @@ const Product: React.FC = () => {
         setSizeType(product?.sizes[0].size_type);
       }
     }
-  }, [product]);
-  // console.log(product, "product");
-  console.log(state, "state");
-  const fetchProductDetails = async (id: string) => {
-    // console.log("asxc");
-    // const endUrl = `products/${id}`;
-    // console.log(endUrl, "endUrl");
-
-    try {
-      const responseData: any = await getApi({
-        endUrl: `products/${id}`,
-      });
-      <Loader />;
-      setProduct(responseData?.data);
-      setSelectedColor(responseData?.data?.colors[0]?.color_id);
-      // console.log(responseData);
-      // console.log(product?.quantity, "zsdfg");
-    } catch (error) {
-      console.error("Error fetching product details:", error);
-    }
-  };
+  }, [product, selectedColor, selectedSize]);
 
   const handleImageClick = () => {
-    // console.log(selectedSize,'size')
-    // console.log(quantity, selectedSize, "qury", product?.category?.category_id);
-    // const path = `/Home/${product?.product_id}/${product?.category?.category_id}`;
-    // console.log(path, "path");
     router.push({
       pathname: `/home/${product?.product_id}/${product?.category?.category_id}`,
       query: {
@@ -80,31 +57,27 @@ const Product: React.FC = () => {
       },
     });
     <Loader />;
-    // router.push(
-    //   `/Home/${product?.product_id}/${product?.category}?quantity=${quantity}&size=${selectedSize}`
-    // );
   };
-  // console.log(quantity, "quan");
 
-  const handleAddToCart = async (productId: any, quantity: number) => {
-    // console.log(selectedColor);
-    const res: any = await postApi({
-      endUrl: "user/add-to-cart",
-      data: {
-        product_id: productId,
-        quantity: quantity,
-        size_id: selectedSize,
-        color_id: selectedColor,
-      },
-    });
-    <Loader />;
-    // setAddCartData(res);
-    // console.log(res, "sdfg");
-    if (res?.status) {
-      toast.success("Product added to Cart");
-      setAddToCart(true);
-      dispatch({ type: "ADD_CART", payload: res?.data?.cart_size });
-    }
+  if (productLoading) return <Loader />;
+
+  const cartAdder = async (
+    id: any,
+    quantity: number,
+    selectedSize: any,
+    selectedColor: any,
+    dispatch: any
+  ) => {
+    let res: any = await CartObject.addToCart.handleAddToCartProduct(
+      id,
+      quantity,
+      selectedSize,
+      selectedColor,
+      dispatch
+    );
+    // console.log(res, "Result");
+    // dispatch({ type: "ADD_CART", payload: res?.data?.cart_size });
+    return res;
   };
 
   const handleSizeChange = (size: {
@@ -114,21 +87,14 @@ const Product: React.FC = () => {
     value: string;
   }) => {
     console.log(size, "size");
-    // console.log(size.label)
-    // console.log(size.label, "sizeVal");
     setSizeType(size.size_type);
     setSelectedSize(size.size_id);
-    // console.log(selectedSize,'select')
   };
 
   const handleColorChange = (color: string) => {
-    // console.log(color, "color");
     setSelectedColor(color);
   };
 
-  // console.log(product?.quantity, "productQuan");
-  // console.log(selectedSize, "sizeSelect");
-  // console.log(sizeType, "sizeType");
   return (
     <div className="pt-[135px] h-screen pr-[110px]">
       <div className="px-[7%]">
@@ -239,7 +205,15 @@ const Product: React.FC = () => {
               <MainButton
                 className="bg-[#0D0D0D] text-[#FFFFFF] font-sans font-semibold text-[16px] flex items-center justify-center"
                 buttonName={`Add to Cart-$${product?.price * quantity}`}
-                onClick={() => handleAddToCart(productId, quantity)}
+                onClick={() =>
+                  cartAdder(
+                    productId,
+                    quantity,
+                    selectedSize,
+                    selectedColor,
+                    dispatch
+                  )
+                }
                 width="350px"
                 height="50px"
               />

@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import useSWR from "swr";
 import { getApi } from "@/api-client/methods";
 import { LIMIT } from "@/utils/constants";
 import { getProductsData, ProductProps } from "@/utils/interface";
@@ -10,6 +11,7 @@ import ColorPicker from "@/components/ColorPicker";
 import Dropdown from "@/components/DropDown";
 import ShopItem from "@/components/ShopItem";
 import MainButton from "@/components/Button";
+import { ProductObject } from "@/api-classes/apis";
 
 const HomePage = () => {
   const options = [
@@ -26,138 +28,87 @@ const HomePage = () => {
     colors: [],
   });
 
-  const [productsData, setProductsData] = useState<ProductProps>({
-    categories: [],
-    colors: [],
-    sizes: [],
-  });
-
   const [dropDownSelection, setDropDownSelection] = useState<string>("rating");
   const [pageNumber, setPageNumber] = useState<number>(1);
-  const [items, setItems] = useState<getProductsData[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [hasMoreProducts, setHasMoreProducts] = useState(true);
-  const [totalProducts, setTotalProducts] = useState(0);
-  const [productsInfo, setProductsInfo] = useState();
-  // const [imageLoading, setImageLoading] = useState(false);
-
-  useEffect(() => {
-    getProductDetails();
-  }, [pageNumber, dropDownSelection, handleOptions]);
-
-  // useEffect(() => {
-  //   getProductDetails();
-  // }, [dropDownSelection]);
-
-  // useEffect(() => {
-  //   getProductDetails();
-  // }, [handleOptions]);
-
-  useEffect(() => {
-    getHomepageData();
-  }, []);
+  const [allProducts, setAllProducts] = useState<getProductsData[]>([]);
 
   const handleQuery = (type: string, array: string[]) => {
-    const resultString = array.map((item) => `${type}=${item}`).join("&");
-    return resultString;
+    return array.map((item) => `${type}=${item}`).join("&");
   };
 
-  const getProductDetails = async () => {
-    setLoading(true);
-    const getProductsData: any = await getApi({
-      endUrl: `list-products?page=${pageNumber}&limit=${LIMIT}&sort_by=${dropDownSelection}&${handleQuery(
-        "category_id",
-        handleOptions.categories
-      )}&${handleQuery("color_id", handleOptions.colors)}`,
-    });
-    // const endUrl = `list-products?page=${pageNumber}&limit=${LIMIT}&sort_by=${dropDownSelection}&${handleQuery(
-    //   "category_id",
-    //   handleOptions.categories
-    // )}&${handleQuery("color_id", handleOptions.colors)}`;
-    // console.log(endUrl, "endUrl");
-    // console.log(getProductsData, "getProducts");
-    setProductsInfo(getProductsData?.data);
-    // console.log(productsInfo,'ind');
-    if (getProductsData) {
-      setItems((prev) => [...prev, ...getProductsData?.data?.products]);
-      setTotalProducts(getProductsData?.data?.total_productss);
-      setLoading(false);
-      setHasMoreProducts(
-        items.length + getProductsData?.data?.products.length <
-          getProductsData?.data?.total_productss
-      );
-    } else {
-      setHasMoreProducts(false);
-    }
+  const fetcher = async (url: string) => {
+    const data: any = await getApi({ endUrl: url });
+    return data?.data;
   };
 
-  const getHomepageData = async () => {
-    setLoading(true);
-    const homeData: any = await getApi({
-      endUrl: "get-product-parameters",
-    });
-    // console.log(homeData, "home");
-    if (homeData) {
-      const { colors = [], sizes = [], categories = [] } = homeData?.data || {};
-      setProductsData({ colors, sizes, categories });
-      setLoading(false);
-      // let accessToken = homeData?.data?.accessToken;
-      // localStorage.setItem("accessToken", accessToken);
+  const { data: productsData, isLoading: productLoading } =
+    useSWR<ProductProps>(
+      "get-product-parameters",
+      ProductObject.getProductParameters.getHomepageData
+    );
+
+  const { data: getProductsData, isLoading: productsLoading } = useSWR(
+    `list-products?page=${pageNumber}&limit=${LIMIT}&sort_by=${dropDownSelection}&${handleQuery(
+      "category_id",
+      handleOptions.categories
+    )}&${handleQuery("color_id", handleOptions.colors)}`,
+    fetcher,
+    {
+      onSuccess: (newProducts) => {
+        setAllProducts((prev) => [...prev, ...(newProducts?.products || [])]);
+      },
     }
-  };
+  );
 
   const handleCategoryToggle = (category: string) => {
-    setItems([]);
     setPageNumber(1);
     setHandleOptions((prev) => {
-      let newCategories;
-      if (prev.categories.includes(category)) {
-        newCategories = prev.categories.filter((e) => e !== category);
-      } else {
-        newCategories = prev.categories.concat(category);
-      }
-
+      const newCategories = prev.categories.includes(category)
+        ? prev.categories.filter((e) => e !== category)
+        : prev.categories.concat(category);
       return {
         ...prev,
         categories: newCategories,
       };
     });
+    setAllProducts([]);
   };
 
   const handleColorToggle = (color: string) => {
-    setItems([]);
     setPageNumber(1);
     setHandleOptions((prev) => {
-      let newColors;
-      if (prev.colors.includes(color)) {
-        newColors = prev.colors.filter((e) => e !== color);
-      } else {
-        newColors = prev.colors.concat(color);
-      }
-
+      const newColors = prev.colors.includes(color)
+        ? prev.colors.filter((e) => e !== color)
+        : prev.colors.concat(color);
       return {
         ...prev,
         colors: newColors,
       };
     });
+    setAllProducts([]);
   };
 
   const handleInput = (value: string) => {
-    // console.log(value);
     setDropDownSelection(value);
-    setItems([]);
+    setPageNumber(1);
+    setAllProducts([]);
   };
-  // console.log(totalProducts, "total");
+
   const handlePages = () => {
-    setLoading(true);
     setPageNumber(pageNumber + 1);
   };
 
   const handleClear = () => {
     setPageNumber(1);
-    setItems([]);
     setHandleOptions({ categories: [], colors: [] });
+    setAllProducts([]);
   };
+
+  if (productLoading || productsLoading) return <Loader />;
+
+  const { total_productss } = getProductsData;
+
+  const hasMoreProducts = allProducts?.length < total_productss;
 
   return (
     <div className="h-full pt-[35px] pr-[110px]">
@@ -168,11 +119,11 @@ const HomePage = () => {
         <div className="font-sans w-[476px] text-[18px] font-normal text-[#FFFFFF]">
           Revamp your style with the latest designer trends in men’s clothing or
           achieve a perfectly curated wardrobe thanks to our line-up of timeless
-          pieces.{" "}
+          pieces.
         </div>
       </div>
       <div className="flex">
-        <div className="w-[25%] sticky top-5">
+        <div className="w-[30%] sticky top-5">
           <div className="sticky top-10">
             <div className="pr-[90px] pl-[145px] pt-[43px]">
               <div className="flex items-center">
@@ -192,7 +143,7 @@ const HomePage = () => {
                 Categories
               </div>
               <div className="pt-[10px] w-[190px]">
-                {productsData.categories.map((category: any, index) => (
+                {productsData?.categories.map((category: any, index) => (
                   <CustomCheckbox
                     key={index}
                     className={
@@ -214,7 +165,7 @@ const HomePage = () => {
                   <div
                     className={`grid grid-cols-5 gap-[10px] pt-[10px] max-w-[157px]`}
                   >
-                    {productsData.colors.map((color: any, index) => (
+                    {productsData?.colors.map((color: any, index) => (
                       <ColorPicker
                         key={index}
                         label={color?.color_code}
@@ -230,28 +181,21 @@ const HomePage = () => {
           </div>
         </div>
 
-        <div className="pl-[90px] pt-[30px] pr-[141px] w-[75%]">
+        <div className="pl-[90px] pt-[30px] pr-[141px] w-[70%]">
           <div className="flex sticky top-0 justify-end z-10">
             <Dropdown options={options} onChange={handleInput} />
           </div>
           <div className="flex sticky top-0 justify-end pt-[24px] pb-[18px] font-sans font-normal text-[14px] text-[#000000]">
-            Showing {totalProducts} Products
+            Showing {allProducts.length} of {total_productss} Products
           </div>
-          {totalProducts === 0 && (
+          {allProducts.length === 0 && (
             <div className="text-[30px] text-[#000000] pt-[60px] font-normal font-sans flex items-center justify-center">
               No products available&#128531;
             </div>
           )}
-          {loading ? (
-            <div>
-              <Loader />
-              {/* <div>No products available</div> */}
-            </div>
-          ) : (
-            <div>
-              <ShopItem items={items} />
-            </div>
-          )}
+          <div>
+            <ShopItem items={allProducts || []} />
+          </div>
           <div className="pt-[42px] pl-[257px] pb-[58px]">
             <div className=" w-[298px] h-[50px]">
               {hasMoreProducts && (
@@ -260,7 +204,7 @@ const HomePage = () => {
                     "text-[#0D0D0D] border border-black font-semibold text-[16px] flex items-center justify-center"
                   }
                   buttonName={
-                    loading ? (
+                    productsLoading ? (
                       <div className="flex items-center">
                         <Loader className="mr-2" />
                         Loading...

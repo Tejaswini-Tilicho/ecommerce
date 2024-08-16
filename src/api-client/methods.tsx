@@ -9,9 +9,9 @@ export const getApi: React.FC<APIprops> = async ({ endUrl, params }) => {
 export const postApi: React.FC<APIprops> = async ({ endUrl, params, data }) => {
   // console.log(response, "resftgy");
   try {
-    const response = await axiosInstance.post(endUrl, data);
+    const response: any = await axiosInstance.post(endUrl, data);
     return response;
-  } catch (err) {
+  } catch (err: any) {
     console.log(err, "err");
     toast.error(err?.message);
   }
@@ -31,12 +31,16 @@ export const deleteApi: React.FC<APIprops> = async ({
   });
 };
 
-export const patchApi: React.FC<APIprops> = async ({ endUrl, params, data }) => {
+export const patchApi: React.FC<APIprops> = async ({
+  endUrl,
+  params,
+  data,
+}) => {
   // console.log(response, "resftgy");
   try {
-    const response = await axiosInstance.patch(endUrl, data);
+    const response: any = await axiosInstance.patch(endUrl, data);
     return response;
-  } catch (err) {
+  } catch (err: any) {
     console.log(err, "err");
     toast.error(err?.message);
   }

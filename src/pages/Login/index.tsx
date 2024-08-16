@@ -1,12 +1,12 @@
 import { Poppins } from "next/font/google";
 import Link from "next/link";
 import { useState } from "react";
-import { postApi } from "@/api-client/methods";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import { Button, Checkbox, Form, Input } from "antd";
 import { Public_Sans } from "next/font/google";
 import useCookie from "react-use-cookie";
+import { AuthObject } from "@/api-classes/apis";
 
 const poppins = Poppins({
   weight: ["400", "700"],
@@ -39,13 +39,11 @@ const Login = () => {
     const { email, password, remember } = values;
 
     try {
-      const apiData: any = await postApi({
-        endUrl: "login",
-        data: { email, password },
-      });
-
+      const apiData: any = await AuthObject.login.login({ email, password });
+      // console.log(apiData, "apidata");
       if (apiData) {
         const { status, message, data } = apiData;
+        // console.log(data, "data");
         localStorage.setItem("userData", JSON.stringify(data));
         localStorage.setItem("accessToken", data?.accessToken);
         localStorage.setItem("refreshToken", data?.refreshToken);

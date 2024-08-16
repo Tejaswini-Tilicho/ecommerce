@@ -1,5 +1,11 @@
 import { useRouter } from "next/router";
 import { Button } from "antd";
+import { Public_Sans } from "next/font/google";
+
+const publicSans = Public_Sans({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+});
 
 const AdminHome = () => {
   const buttons = [
@@ -30,15 +36,16 @@ const AdminHome = () => {
           ))} */}
           <div>
             <Button
-              className="bg-[#000] w-[525px] h-[75px] text-[16px] text-[#FFF]"
+              className={`bg-[#000] ${publicSans.className} w-[525px] h-[75px] font-semibold text-[16px] text-[#FFF]`}
               onClick={() => router.push("/add-products")}
             >
               Add Products
             </Button>
+            {/* <StepForwardOutlined /> */}
           </div>
           <div>
             <Button
-              className="bg-[#000] mt-[72px] w-[525px] h-[75px] text-[#FFF]"
+              className={`bg-[#000] ${publicSans.className} mt-[72px] w-[525px] font-semibold text-[16px] h-[75px] text-[#FFF]`}
               onClick={() => router.push("/admin-dashboard")}
             >
               View Products

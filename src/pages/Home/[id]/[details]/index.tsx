@@ -1,119 +1,57 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useEffect, useState } from "react";
-import { Public_Sans } from "next/font/google";
+import React, { useState } from "react";
 import { useCartContext } from "@/context/context";
 import { useRouter } from "next/router";
-import { getApi, postApi } from "@/api-client/methods";
 import SingleDropdown from "@/components/SingleDropdown";
-import { toast } from "react-toastify";
 import MainButton from "@/components/Button";
-import Loader from "@/components/Loader";
 import Carousel from "@/components/Carousel";
 import Counter from "@/components/Quantity";
-
-const publicSans = Public_Sans({
-  weight: ["400", "700"],
-  subsets: ["latin"],
-});
+import { CartObject, ProductObject } from "@/api-classes/apis";
+import useSWR from "swr";
 
 const ProductInfo: React.FC = () => {
   const { state, dispatch } = useCartContext();
   const router = useRouter();
-  const [data, setData] = useState<any>(null);
-  const [productSize, setProductSize] = useState<string | null>(null);
-  const [productColor, setProductColor] = useState<string | null>(null);
-  const [addToCart, setAddToCart] = useState<boolean>(false);
-  // const [count, setCount] = useState(1);
 
-  // const {
-  //   id: productId,
-  //   quantity: quantityNumber,
-  //   size: sizeFromQuery,
-  //   color: colorFromQuery,
-  // } = router.query;
   const queryData = router.query;
-  console.log(queryData?.sizeLabel, "sizelabel");
+  // console.log(state, "STATE");
   const [sizeLabel, setSizelabel] = useState<string | null>(
     queryData?.sizeLabel as string
   );
 
-  // console.log(router.query, "router");
   const [count, setCount] = useState<number>(Number(queryData?.quantity));
-  console.log(count, "quan");
 
-  // console.log(queryData, "query");
-  // console.log(data, "data");
-  // console.log(state, "single");
-
-  useEffect(() => {
-    // console.log(queryData, "sdfg");
-    if (queryData?.id) {
-      handleProductDetails(queryData?.id as string);
-    }
-  }, [router.query]);
-  // console.log(productId)
-  console.log(queryData, "sizecome");
-  // useEffect(() => {
-  //   if (selectSize) {
-  //     const selectedOption = options.find(
-  //       (option) => option.value === selectSize
-  //     );
-  //     if (selectedOption) {
-  //       setSelectedPlaceholder(selectedOption.label);
-  //     }
-  //   }
-  // }, [selectSize, options]);
-
-  const handleProductDetails = async (id: string) => {
-    try {
-      const responseData: any = await getApi({
-        endUrl: `products/${id}`,
-      });
-      <Loader />;
-      setData(responseData?.data);
-      // console.log(responseData?.data, "responseData");
-    } catch (error) {
-      console.error("Error fetching product details:", error);
-    }
+  // console.log(queryData, "quregt", count);
+  const fetcher = () => {
+    return ProductObject.productDetails.handleProductDetails(
+      queryData?.id as string
+    );
   };
 
-  // const handleSizeChange = (size: { label: string; value: string }) => {
-  //   setProductSize(size.value);
-  // };
+  const { data } = useSWR(`products/${queryData?.id}`, fetcher);
 
   const handleSizeChange = (size: { label: string; value: string }) => {
-    console.log(size, "sizeChange");
-    setProductSize(size?.value);
     setSizelabel(size?.label);
     router.push({
       pathname: router.pathname,
       query: { ...router.query, size: size.value },
     });
   };
-  console.log(productSize, "size");
-  // console.log(queryData, "query");
-  // console.log(count, "count");
-  const handleAddToCart = async (productId: any, quantity: number) => {
-    // console.log(selectedColor);
-    const res: any = await postApi({
-      endUrl: "user/add-to-cart",
-      data: {
-        product_id: queryData?.id,
-        quantity: count,
-        size_id: queryData?.size,
-        color_id: queryData?.color,
-      },
-    });
-    <Loader />;
-    // setAddCartData(res);
-    // console.log(res, "sdfg");
-    if (res?.status) {
-      toast.success("Product added to Cart");
-      setAddToCart(true);
-      dispatch({ type: "ADD_CART", payload: res?.data?.cart_size });
-    }
+
+  const cartAdder = (
+    id: any,
+    quantity: number,
+    queryData: any,
+    dispatch: any
+  ) => {
+    let res: any = CartObject.addToCart.handleAddToCart(
+      id,
+      quantity,
+      queryData,
+      dispatch
+    );
+    return res;
   };
-  // console.log(quantityNumber, sizeFromQuery, "fgh");
 
   const handleBuyNow = () => {
     router.push({
@@ -195,7 +133,9 @@ const ProductInfo: React.FC = () => {
             <MainButton
               className="bg-[#0D0D0D] text-[#FFFFFF] font-sans font-semibold text-[16px] flex items-center justify-center"
               buttonName={`Add to Cart - $${data?.price * count}`}
-              onClick={() => handleAddToCart(data?.product_id, 1)}
+              onClick={() =>
+                cartAdder(data?.product_id, count, queryData, dispatch)
+              }
               width="198px"
               height="50px"
             />

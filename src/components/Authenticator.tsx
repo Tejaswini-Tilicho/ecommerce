@@ -33,7 +33,7 @@ export default function AuthProvider({ children }: AuthProps) {
     console.log(asPath);
 
     const accessToken = localStorage.getItem("accessToken");
-    const role = localStorage.getItem("role") || "";
+    const role = JSON.parse(localStorage.getItem("role") || "");
     const check = authenticationRoutes.find((e) => routerPath.startsWith(e));
     // console.log(check, "check");
 

@@ -11,6 +11,13 @@ import MainButton from "@/components/Button";
 import Loader from "@/components/Loader";
 import { useCartContext } from "@/context/context";
 import { toast } from "react-toastify";
+import { Button, Divider } from "antd";
+import { Public_Sans } from "next/font/google";
+
+const publicSans = Public_Sans({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+});
 
 const AdminDashboard = () => {
   const router = useRouter();
@@ -230,7 +237,7 @@ const AdminDashboard = () => {
                   <div>${product.price}</div>
                 </div>
                 <div className="flex">
-                  <MainButton
+                  {/* <MainButton
                     className={
                       "text-[#0D0D0D] border border-black font-semibold font-sans text-[16px] mt-[76px] ml-[269px]"
                     }
@@ -240,8 +247,16 @@ const AdminDashboard = () => {
                     }
                     width={"164px"}
                     height={"46px"}
-                  />
-                  <MainButton
+                  /> */}
+                  <Button
+                    className={`text-[#0D0D0D] bg-[#EFF2F6] w-[164px] h-[46px] border border-black font-semibold ${publicSans.className} text-[16px] mt-[76px] ml-[269px]`}
+                    onClick={() =>
+                      router.push(`/edit-products/${product?.product_id}`)
+                    }
+                  >
+                    Edit
+                  </Button>
+                  {/* <MainButton
                     className={
                       "text-[#0D0D0D] border border-black font-semibold font-sans text-[16px] mt-[76px] ml-[42px]"
                     }
@@ -249,11 +264,18 @@ const AdminDashboard = () => {
                     onClick={() => handleDelete(product?.product_id)}
                     width={"164px"}
                     height={"46px"}
-                  />
+                  /> */}
+                  <Button
+                    className={`text-[#0D0D0D] border border-black w-[164px] h-[46px] font-semibold ${publicSans.className} bg-[#EFF2F6] font-sans text-[16px] mt-[76px] ml-[42px]`}
+                    onClick={() => handleDelete(product?.product_id)}
+                  >
+                    Delete
+                  </Button>
                 </div>
               </div>
               {index < productsInfo?.products?.length - 1 && (
-                <div className="border-[1px] w-full h-0.5 border-[#909090] my-[17px]"></div>
+                // <div className="border-[1px] w-full h-0.5 border-[#909090] my-[17px]"></div>
+                <Divider className="border-[1px] w-full border-[#909090] my-[17px]"></Divider>
               )}
             </div>
           ))}
